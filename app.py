@@ -112,14 +112,22 @@ def crosstabs(df, var1, var2, var1_alias, var2_alias, norm):
         ct = ct.applymap(lambda x: "{:,.0f}".format(x))
         ct = sort_crosstabs(ct)
         ct = add_aliases(ct, var1_alias, var2_alias)
-        st.dataframe(ct, height=40*len(ct)+1)
+        if len(ct) > 10:
+            st.dataframe(ct, height=40*len(ct)+1)
+        else:
+            st.dataframe(ct)
+
 
     def normed_crosstab(df, var1, var2, var1_alias, var2_alias, norm):
         ct_norm = pd.DataFrame(pd.crosstab(df[var1], df[var2], margins=True, margins_name ='TOTAL', normalize=norm))
         ct_norm = ct_norm.applymap(lambda x: "{:.0f}%".format(x*100))
         ct_norm = sort_crosstabs(ct_norm)
         ct_norm = add_aliases(ct_norm, var1_alias, var2_alias)
-        st.dataframe(ct_norm, height=40*len(ct_norm)+1)
+        if len(ct_norm) > 10:
+            st.dataframe(ct_norm, height=40*len(ct_norm)+1)
+        else:
+            st.dataframe(ct_norm)
+
 
     st.write(f'**Total Counts:**')
     count_crosstab(df, var1, var2, var1_alias, var2_alias)
