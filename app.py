@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os
 
 pd.set_option('display.max_columns', 100)
 
@@ -9,21 +10,34 @@ def set_markdown():
 
 def select_table():
     st.sidebar.header('1. Select Table')
-    table_name = st.sidebar.selectbox('test', ['cvivpc_vbm_targets_wi_20230125_enr'], label_visibility='collapsed')
+
+    file_list = os.listdir('pickles')
+    file_list = [f.replace('.pkl','') for f in file_list]
+
+    table_name = st.sidebar.selectbox('test', file_list, label_visibility='collapsed')
     return table_name
 
 @st.cache(suppress_st_warning=True)
 def load_data(table_name):
     df = pd.read_pickle(f'pickles/{table_name}.pkl')
     df = df.applymap(lambda s:s.upper() if type(s) == str else s)
-    df = df.fillna('NULL')
+
+    # st.write(df.columns)
+    # st.write(df.dtypes)
+
+    for col in df.columns:
+        if 'date' in col:
+            df[col] = pd.to_datetime(df[col]).dt.date
+            df[col] = df[col].fillna(pd.NaT)
+        else:
+            df[col] = df[col].fillna('NULL')
     return df
 
 def set_description(df, table_name):
     st.markdown('<h1 style="color:#3d539c; font-size: 30px; font-weight:bold;">Counts and Crosstabs</h1>', unsafe_allow_html=True)
     help = st.checkbox('What am I looking at? Help me!')
     if help:
-        st.write("haha no...")
+        st.write("TO DO: add help text")
     description_dict = {
      'cvivpc_vbm_targets_wi_20230125_enr' : 'WI April General Vote By Mail Planning Universe from CVI/VPC [2023-01-25]'
     }
@@ -40,9 +54,14 @@ def set_description(df, table_name):
 def display_all_counts(df, columns, sort):
     for col in columns:
         if sort == 'index':
-            st.write(df[col].value_counts().sort_index().map('{:,.0f}'.format))
+            df_ = df[col].value_counts(dropna=False).sort_index()
         else:
-            st.write(df[col].value_counts().map('{:,.0f}'.format))
+            df_ = df[col].value_counts(dropna=False)
+        try:
+            df_.map('{:,.0f}'.format)
+        except:
+            pass
+        st.write(df_)
 
 def sidebar_setup(df):
     st.sidebar.header('2. Select Variables')

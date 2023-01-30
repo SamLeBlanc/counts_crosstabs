@@ -1,3 +1,8 @@
+sys
 streamlit
 pandas
 numpy
+boto3
+redshift_connector
+os
+dotenv
