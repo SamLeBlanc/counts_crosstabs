@@ -14,7 +14,7 @@ def select_table():
 
 @st.cache(suppress_st_warning=True)
 def load_data(table_name):
-    df = pd.read_pickle(f'{table_name}.pkl')
+    df = pd.read_pickle(f'pickles/{table_name}.pkl')
     df = df.applymap(lambda s:s.upper() if type(s) == str else s)
     df = df.fillna('NULL')
     return df
