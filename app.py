@@ -8,7 +8,6 @@ def set_markdown():
     st.markdown(f'''<style>.css-1vq4p4l {{padding:1rem}};</style>''', unsafe_allow_html=True)
 
 def select_table():
-    st.sidebar.markdown('<h1 style="color:Blue; font-size: 30px; font-weight:bold;">Counts and Crosstabs</h1>', unsafe_allow_html=True)
     st.sidebar.header('1. Select Table')
     table_name = st.sidebar.selectbox('test', ['cvivpc_vbm_targets_wi_20230125_enr'], label_visibility='collapsed')
     return table_name
@@ -21,19 +20,29 @@ def load_data(table_name):
     return df
 
 def set_description(df, table_name):
+    st.markdown('<h1 style="color:#3d539c; font-size: 30px; font-weight:bold;">Counts and Crosstabs</h1>', unsafe_allow_html=True)
+    help = st.checkbox('What am I looking at? Help me!')
+    if help:
+        st.write("haha no...")
     description_dict = {
      'cvivpc_vbm_targets_wi_20230125_enr' : 'WI April General Vote By Mail Planning Universe from CVI/VPC [2023-01-25]'
     }
     st.markdown(f'<span>Table Name:\t\t</span><span style="font-size: 20px; font-weight:bold;">{table_name}</span>', unsafe_allow_html=True)
-    st.markdown(f'<span>Table Description:\t\t</span><span style="font-size: 20px; font-weight:bold;">{description_dict[table_name]}</span>', unsafe_allow_html=True)
+
+    if table_name in description_dict.keys():
+        descrip = description_dict[table_name]
+    else:
+        descrip = 'None'
+
+    st.markdown(f'<span>Table Description:\t\t</span><span style="font-size: 20px; font-weight:bold;">{descrip}</span>', unsafe_allow_html=True)
     st.markdown(f'<span>Total Rows:\t\t</span><span style="font-size: 20px; font-weight:bold;">{"{:,}".format(len(df))}</span>', unsafe_allow_html=True)
 
 def display_all_counts(df, columns, sort):
     for col in columns:
         if sort == 'index':
-            st.write(df[col].value_counts().sort_index())
+            st.write(df[col].value_counts().sort_index().map('{:,.0f}'.format))
         else:
-            st.write(df[col].value_counts())
+            st.write(df[col].value_counts().map('{:,.0f}'.format))
 
 def sidebar_setup(df):
     st.sidebar.header('2. Select Variables')
@@ -43,7 +52,7 @@ def sidebar_setup(df):
     col1, col2, col3 = st.sidebar.columns([2,1,1], gap="small")
 
     with col1:
-        st.write("All Variable Counts")
+        st.write("Display Counts for \n **All Variables**")
     with col2:
         A = st.button('By Index')
         # display_all_counts(df, columns_with_few_unique_values, 'index')
@@ -56,13 +65,13 @@ def sidebar_setup(df):
     if B:
         display_all_counts(df, columns_with_few_unique_values, 'value')
 
-
+    st.sidebar.write('_... or select specific variables ..._')
     var1, var2 = None, None
-    var1 = st.sidebar.selectbox('VARIABLE 1 (ROWS)', [None] + columns_with_few_unique_values)
+    var1 = st.sidebar.selectbox('**VARIABLE 1 (ROWS)**', [None] + columns_with_few_unique_values)
     var1_alias = st.sidebar.text_input('VARIABLE 1 ALIAS (Optional)', '')
     st.sidebar.write("")
     st.sidebar.write("")
-    var2 = st.sidebar.selectbox('VARIABLE 2 (COLUMNS)', [None] + columns_with_few_unique_values)
+    var2 = st.sidebar.selectbox('**VARIABLE 2 (COLUMNS)**', [None] + columns_with_few_unique_values)
     var2_alias = st.sidebar.text_input('VARIABLE 2 ALIAS (Optional)', '')
 
     st.sidebar.header('3. Normalize By')
