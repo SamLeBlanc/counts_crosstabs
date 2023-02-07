@@ -10,17 +10,23 @@ This program is to be run locally only. To get new tables, the app requires your
 
 The estimated intital set-up time for this project is five minutes, after that, adding new tables is as fast as the `select * from table` command.
 
+### 0. Install Python
+
+To run this app, you must have Python (version > 3.7) installed on your system. You can install that [here](https://www.python.org/downloads/). 
+
+Note, Python comes pre-installed on Mac OS X.
+
 ### 1. Clone the repository and move into the folder
 
 In your terminal, run the following commands:
 
-- `git clone https://github.com/SamLeBlanc/counts_crosstabs.git`
+- `git clone https://github.com/AmericaVotes/Redshift-Counts-and-Crosstabs-via-Streamlit.git`
 
-- `cd counts_crosstabs`
+- `cd Redshift-Counts-and-Crosstabs-via-Streamlit`
 
 ### 2. In the root folder, create a `.env` file with your Redshift credentials
 
-In order to access Redshift, you will need to create file with environmental variables containing your Redshift username and password. 
+In order to access Redshift, you will need to create a file with environmental variables containing your Redshift username and password. The file must be stored in the main repository folder.
 
 Format the file exactly as shown below, with identical variable names. The file should be named `.env`! Not `credentials.env` or `helloworld.env`, just `.env`
 
